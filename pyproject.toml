@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "soniavision"  # nom du projet/distribution
+version = "0.1.0"
+description = ""
+authors = ["Roberto Nightingale <roberto.nightingale@hotmail.com>"]
+readme = "README.md"
+packages = [{ include = "yrl", from = "src" }]
+
+[tool.poetry.dependencies]
+python = ">=3.12"
+typer = "^0.12"
+rich = "*"
+tqdm = "*"
+numpy = "*"
+opencv-python = "*"
+pyyaml = "*"
+python-dotenv = "^1.0"
+rosbags = "*"
+labelbox = "*"
+ultralytics = "*"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "*"
+black = "*"
+pytest = "*"
+pre-commit = "*"
+
+[tool.poetry.scripts]
+yrl = "yrl.cli:app"           # ex: poetry run yrl --help
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
