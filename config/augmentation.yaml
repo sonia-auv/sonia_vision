@@ -1,0 +1,46 @@
+# Ultralytics YOLO 🚀, AGPL-3.0 license.
+# Sonia-AI data augmentation settings.
+
+# Augmentation  -------------------------------------------------------------------------------------------------------
+# Useful for AUVs, helps with brightness or lighting changes.
+hsv_h: 0.015 # (float) image HSV-Hue augmentation (fraction).
+hsv_s: 0.7 # (float) image HSV-Saturation augmentation (fraction).
+hsv_v: 0.4 # (float) image HSV-Value augmentation (fraction).
+
+# Useful for AUVs, is can help because the AUV can slightly rotate.
+degrees: 40 # (float) image rotation (+/- deg).
+
+# Useful for AUVs, helps detecting object is at the edge.
+translate: 0.4 # (float) image translation (+/- fraction).
+
+# Useful for AUVs beauce objects size can change depending on their distance to the AUV.
+scale: 0.4 # (float) image scale (+/- gain).
+
+# Useful for AUVs, it help with changes of perspective. 
+perspective: 0.001 # (float) image perspective (+/- fraction), range 0-0.001.
+
+# Not useful for AUVs, because these transformations won't occur underwater.
+shear: 0.0 # (float) image shear (+/- deg).
+
+# Not really useful for AUVs, since they won't flip while detecting objects.
+flipud: 0.0 # (float) image flip up-down (probability).
+fliplr: 0.0 # (float) image flip left-right (probability).
+
+# No idea whether these transformation improves learning or not, we need to test it.
+mosaic: 0.0 # (float) image mosaic (probability).
+close_mosaic: 50 # (int) disable mosaic augmentation for final epochs (0 to disable).
+
+# No idea whether these transformation improves learning or not, we need to test it.
+mixup: 0.0 # (float) image mixup (probability).
+
+# No idea whether these transformation improves learning or not, we need to test it.
+copy_paste: 0.0 # (float) segment copy-paste (probability).
+
+# No idea whether these transformation improves learning or not, we need to test it.
+auto_augment: None # (str) auto augmentation policy for classification (randaugment, autoaugment, augmix).
+
+# No idea whether these transformation improves learning or not, we need to test it.
+erasing: 0.0 # (float) probability of random erasing during classification training (0-1).
+
+# No idea whether these transformation improves learning or not, we need to test it.
+crop_fraction: 0.0 # (float) image crop fraction for classification evaluation/inference (0-1).

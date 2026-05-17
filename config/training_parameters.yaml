@@ -1,0 +1,42 @@
+# Ultralytics YOLO 🚀, AGPL-3.0 license.
+# Sonia-AI training settings.
+
+# Main settings -------------------------------------------------------------------------------------------------------
+# Do not change these parameters (or the model won't work and won't learn).
+task: segment # (str) YOLO task, i.e. detect, segment, classify, pose.
+mode: train # (str) YOLO mode, i.e. train, val, predict, export, track, benchmark.
+
+# Train settings -------------------------------------------------------------------------------------------------------
+# Usually, 100 epochs is enough.
+epochs: 100 # (int) number of epochs to train for.
+
+# Warning it overides the number of epochs, useful is you have a known delay to train your model (at the competition).
+time: # (float, optional) number of hours to train for, overrides epochs if supplied.
+
+# Stop the training after this number of epochs without improvements.
+patience: 20 # (int) epochs to wait for no observable improvement for early stopping of training.
+
+# Take care not to overload the RAM memory of your computer.
+batch: 16 # (int) number of images per batch (-1 for AutoBatch).
+
+# [600, 400] is good, 320 is faster but induces a loss of precision.
+imgsz: [600, 400] # (int | list) input images size as int for train and val modes, or list[w,h] for predict and export modes.
+
+# If you want to train a model, don't set it as False.
+save: True # (bool) save train checkpoints and predict results.
+
+# Good idea to save each epoch is there is a risk that the training stops.
+save_period: -1 # (int) Save checkpoint every x epochs (disabled if < 1).
+
+# Really useful to see if the training went well or not.
+plots: True # (bool) save plots and images during train/val.
+
+# Auto is good.
+optimizer: auto # (str) optimizer to use, choices=[SGD, Adam, Adamax, AdamW, NAdam, RAdam, RMSProp, auto].
+
+# You should use 1.0 since the dataset is already divided in train, val and test sets.
+fraction: 1.0 # (float) dataset fraction to train on (default is 1.0, all images in train set).
+
+# Hyperparameters ------------------------------------------------------------------------------------------------------
+# 0.0 corresponds to one-hot encoding.
+label_smoothing: 0.0 # (float) label smoothing (fraction).
