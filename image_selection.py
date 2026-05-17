@@ -1,3 +1,4 @@
+
 import os
 from rosbags.rosbag2 import Reader
 from rosbags.typesys import Stores, get_typestore
@@ -20,7 +21,7 @@ DEFAULT_CAMERA_TOPICS = [
 
 class ImageSelector:
     def __init__(
-        self, bag_paths, preselection_coeff=0.1, topic_list=DEFAULT_CAMERA_TOPICS
+            self, bag_paths, preselection_coeff=0.1, topic_list=DEFAULT_CAMERA_TOPICS
     ):
         """
         Initializes the ImageSelector with a directory path and image size.
@@ -109,18 +110,28 @@ class ImageSelector:
 
     def _simplified_topic(self):
         match self.current_topic:
+
             case "/camera_array/bottom/image_raw/compressed":
                 return "bottom"
+
             case "/camera_array/front/image_raw/compressed":
                 return "front"
+
             case "/zed/zed_node/left/image_rect_color/compressed":
                 return "zed_left"
+
             case "/zed/zed_node/right/image_rect_color/compressed":
                 return "zed_right"
+
             case "/proc_simulation/bottom/compressed":
                 return "sim_bottom"
+
             case "/proc_simulation/front/compressed":
                 return "sim_front"
+
+            # 🔥 IMPORTANT fallback
+            case _:
+                return self.current_topic.replace("/", "_")
 
     def preprocess_image(self, img):
         ycrcb_img = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2YCrCb)
@@ -139,11 +150,81 @@ class ImageSelector:
             while i < len(messages):
                 connection, timestamp, rawdata = messages[i]
                 if connection.topic == self.current_topic:
+
                     msg = typestore.deserialize_cdr(rawdata, connection.msgtype)
-                    img_array = np.frombuffer(msg.data, dtype=np.uint8)
-                    img = self.preprocess_image(
-                        cv2.imdecode(img_array, cv2.IMREAD_COLOR)
-                    )
+
+                    # -------------------------
+                    # COMPRESSED IMAGE
+                    # -------------------------
+                    if hasattr(msg, "format"):
+
+                        img_array = np.frombuffer(msg.data, dtype=np.uint8)
+
+                        img = cv2.imdecode(
+                            img_array,
+                            cv2.IMREAD_COLOR,
+                        )
+
+                    # -------------------------
+                    # RAW IMAGE
+                    # -------------------------
+                    else:
+
+                        img = np.frombuffer(
+                            msg.data,
+                            dtype=np.uint8,
+                        )
+
+                        if msg.encoding == "rgb8":
+
+                            img = img.reshape(
+                                (msg.height, msg.width, 3)
+                            )
+
+                            img = cv2.cvtColor(
+                                img,
+                                cv2.COLOR_RGB2BGR,
+                            )
+
+                        elif msg.encoding == "bgr8":
+
+                            img = img.reshape(
+                                (msg.height, msg.width, 3)
+                            )
+
+                        elif msg.encoding == "rgba8":
+
+                            img = img.reshape(
+                                (msg.height, msg.width, 4)
+                            )
+
+                            img = cv2.cvtColor(
+                                img,
+                                cv2.COLOR_RGBA2BGR,
+                            )
+
+                        elif msg.encoding == "bgra8":
+
+                            img = img.reshape(
+                                (msg.height, msg.width, 4)
+                            )
+
+                            img = cv2.cvtColor(
+                                img,
+                                cv2.COLOR_BGRA2BGR,
+                            )
+
+                        else:
+                            print(f"Unsupported encoding: {msg.encoding}")
+                            i += 1
+                            continue
+
+                    img = self.preprocess_image(img)
+
+                    # img_array = np.frombuffer(msg.data, dtype=np.uint8)
+                    # img = self.preprocess_image(
+                    #     cv2.imdecode(img_array, cv2.IMREAD_COLOR)
+                    # )
                     self._display_image(
                         img,
                         int(i * self.preselection_coeff),
@@ -183,11 +264,8 @@ class ImageSelector:
         print("Press 'y' to save the image, 'n' to skip, 'p' to go back, 'q' to quit.")
         print("Press any other key to see this message again.")
 
-
     def __del__(self):
         """
         Destructor to clean up resources.
         """
         cv2.destroyAllWindows()
-
-
